@@ -10,6 +10,13 @@ type TaskboardRead struct {
 
 var taskboardRepository = make(map[uuid.UUID]*TaskboardRead)
 
+type StoryRead struct {
+	Id          uuid.UUID
+	Description string
+}
+
+var taskboardStoryRepository = make(map[uuid.UUID][]*StoryRead)
+
 func GetAllTaskboards() []TaskboardRead {
 	var boards []TaskboardRead
 
@@ -18,6 +25,14 @@ func GetAllTaskboards() []TaskboardRead {
 	}
 
 	return boards
+}
+
+func GetTaskboardById(taskboardId uuid.UUID) *TaskboardRead {
+	return taskboardRepository[taskboardId]
+}
+
+func GetStoriesForTaskboard(taskboardId uuid.UUID) []*StoryRead {
+	return taskboardStoryRepository[taskboardId]
 }
 
 func UpdateReadRepositoryFromEvents(events []interface{}) {
@@ -32,6 +47,10 @@ func UpdateReadRepositoryFromEvents(events []interface{}) {
 		case StoryAdded:
 			board := taskboardRepository[e.TaskboardId]
 			board.NumberOfStories++
+			taskboardStoryRepository[e.TaskboardId] = append(taskboardStoryRepository[e.TaskboardId], &StoryRead{
+				e.StoryId,
+				e.Description,
+			})
 		}
 	}
 }

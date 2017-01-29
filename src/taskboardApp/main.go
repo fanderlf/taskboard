@@ -47,6 +47,28 @@ func boards(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "layout", taskboards)
 }
 
+func stories(w http.ResponseWriter, r *http.Request) {
+	boardId, _ := uuid.Parse(r.URL.Query().Get("boardId"))
+	stories := taskboard.GetStoriesForTaskboard(boardId)
+	board := taskboard.GetTaskboardById(boardId)
+
+	t, err := template.ParseFiles("./views/_layout.html", "./views/stories.html")
+
+	if err != nil {
+		fmt.Fprint(w, err)
+		return
+	}
+
+	data := struct {
+		Teamname string
+		Stories  []*taskboard.StoryRead
+	}{
+		board.Teamname,
+		stories,
+	}
+	t.ExecuteTemplate(w, "layout", data)
+}
+
 func file(w http.ResponseWriter, r *http.Request) {
 	filename := r.URL.Query().Get("name")
 
@@ -71,6 +93,7 @@ func file(w http.ResponseWriter, r *http.Request) {
 func main() {
 	fmt.Println("Hello World!")
 	http.HandleFunc("/boards", boards)
+	http.HandleFunc("/stories", stories)
 	http.HandleFunc("/file", file)
 	http.ListenAndServe(":8080", nil)
 }
