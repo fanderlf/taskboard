@@ -2,8 +2,11 @@ package main
 
 import (
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"taskboard"
+
+	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -37,11 +40,11 @@ func boards(w http.ResponseWriter, r *http.Request) {
     <html>
         <head>
             <title>taskboards</title>
+			<script src="/file?name=/js/test.js"></script>
         </head>
         <body>
-            {{range .}}
-                <div>{{.Teamname}} {{.NumberOfStories}}!</div>
-            {{end}}
+            {{range .}}<div>{{.Teamname}} {{.NumberOfStories}}!</div>
+			{{end}}
         </body>
     </html>
     `
@@ -49,7 +52,30 @@ func boards(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, taskboards)
 }
 
+func file(w http.ResponseWriter, r *http.Request) {
+	filename := r.URL.Query().Get("name")
+
+	if filename == "" {
+		http.Error(w, "you have to provide a filename", http.StatusNotFound)
+		return
+	}
+
+	filepath := "./assets" + filename
+
+	fmt.Println(filepath)
+
+	content, err := ioutil.ReadFile(filepath)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+	}
+
+	fmt.Fprintf(w, "%s", content)
+}
+
 func main() {
+	fmt.Println("Hello World!")
 	http.HandleFunc("/boards", boards)
+	http.HandleFunc("/file", file)
 	http.ListenAndServe(":8080", nil)
 }
