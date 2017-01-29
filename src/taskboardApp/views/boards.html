@@ -1,0 +1,16 @@
+{{ define "content" }}
+<div class="container-fluid">
+    <div class="row">
+        <h2>Available Boards:</h2>
+    </div>
+    {{range .}}
+    <div class="row">
+        <div class="col-sm-2">{{.Teamname}} {{.NumberOfStories}}!</div>
+        <div class="col-sm-10">
+            <button class="btn btn-success btn-sm">Show</button>
+        </div>
+    </div>
+    {{end}}
+    
+</div>
+{{ end }}

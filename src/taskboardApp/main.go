@@ -32,24 +32,19 @@ func init() {
 	thirdBoard.AddStory(uuid.New(), "my first story")
 	thirdBoard.AddStory(uuid.New(), "my first story")
 	taskboard.SaveTaskboard(thirdBoard)
+
 }
 
 func boards(w http.ResponseWriter, r *http.Request) {
 	taskboards := taskboard.GetAllTaskboards()
-	mytemplate := `
-    <html>
-        <head>
-            <title>taskboards</title>
-			<script src="/file?name=/js/test.js"></script>
-        </head>
-        <body>
-            {{range .}}<div>{{.Teamname}} {{.NumberOfStories}}!</div>
-			{{end}}
-        </body>
-    </html>
-    `
-	t, _ := template.New("boardlist").Parse(mytemplate)
-	t.Execute(w, taskboards)
+
+	t, err := template.ParseFiles("./views/_layout.html", "./views/boards.html")
+
+	if err != nil {
+		fmt.Fprint(w, err)
+		return
+	}
+	t.ExecuteTemplate(w, "layout", taskboards)
 }
 
 func file(w http.ResponseWriter, r *http.Request) {
