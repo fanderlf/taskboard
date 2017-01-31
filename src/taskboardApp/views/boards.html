@@ -1,20 +1,24 @@
 {{ define "content" }}
 <div class="container-fluid">
     <div class="row">
-        <ol class="breadcrumb">
-            <li class="active">Boards</li>
-        </ol>
+        <div class="col-xs-12">
+            <ol class="breadcrumb">
+                <li class="active">Boards</li>
+            </ol>
+        </div>
     </div>
     <div class="row">
-        <h2>Available Boards:</h2>
+        <div class="col-xs-12">
+            <h2>Available Boards:</h2>
+        </div>
     </div>
     <div class="row">
-        <div class="col-xs-2">Team</div>
+        <div class="col-xs-3">Team</div>
         <div class="col-xs-2">Stories</div>
     </div>
     {{range .}}
     <div class="row">
-        <div class="col-xs-2">{{.Teamname}}</div>
+        <div class="col-xs-3">{{.Teamname}}</div>
         <div class="col-xs-1">{{.NumberOfStories}}</div>
         <div class="col-xs-1">
             <a href="/stories?boardId={{.Id}}"> <button class="btn btn-success btn-sm">Show</button> </a>
